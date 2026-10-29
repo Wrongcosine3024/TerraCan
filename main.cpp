@@ -20,12 +20,5 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    for (int i = 0; i < 1000; ++i) {
-        QString test = "Test ";
-        test.append(QString::number(i));
-        w.logMessage(test);
-
-    }
-
     return QApplication::exec();
 }

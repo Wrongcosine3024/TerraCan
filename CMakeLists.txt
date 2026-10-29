@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(TerraCan_MissionControl LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools SerialPort)
 
 qt_standard_project_setup()
 
@@ -12,6 +12,7 @@ qt_add_executable(TerraCan_MissionControl
     mainwindow.h
     mainwindow.ui
     tctelemetry.h
+    odbiornikcom.h odbiornikcom.cpp
 )
 
 qt_add_translations(
@@ -23,6 +24,7 @@ target_link_libraries(TerraCan_MissionControl
     PRIVATE
         Qt::Core
         Qt::Widgets
+        Qt6::SerialPort
 )
 
 install(TARGETS TerraCan_MissionControl
