@@ -33,6 +33,12 @@ private slots:
 
     void on_clear_clicked();
 
+    void on_startSIM_clicked();
+
+    void physConsole(QString line);
+
+    void on_actionUstawienia_triggered();
+
 private:
     Ui::MainWindow *ui;
     OdbiornikWorker *comWorker;

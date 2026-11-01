@@ -16,6 +16,8 @@ qt_add_executable(TerraCan_MissionControl
     odbiornikcom_worker.h
     odbiornikcom_worker.cpp
     physicsengine.h physicsengine.cpp
+    physicsutils.h
+    settingdialog.h settingdialog.cpp settingdialog.ui
 
 )
 

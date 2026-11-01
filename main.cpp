@@ -6,6 +6,9 @@
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setOrganizationName("TerraCan");
+    QCoreApplication::setApplicationName("MissionControl");
+
     QApplication a(argc, argv);
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();

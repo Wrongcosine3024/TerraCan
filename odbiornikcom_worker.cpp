@@ -8,6 +8,7 @@ OdbiornikWorker::OdbiornikWorker(QObject *parent){
     connect(this, &OdbiornikWorker::spodlaczCom, radio, &OdbiornikCom::podlaczCom);
     connect(radio, &OdbiornikCom::connResult, this, &OdbiornikWorker::connResult);
     connect(this, &OdbiornikWorker::srozlaczCom, radio, &OdbiornikCom::rozlaczCom);
+    connect(watek, &QThread::finished, radio, &QObject::deleteLater);
     watek->start();
 }
 

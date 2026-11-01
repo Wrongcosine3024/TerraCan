@@ -125,7 +125,7 @@
                   <enum>QTabWidget::TabShape::Rounded</enum>
                  </property>
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="Telemetria">
                   <attribute name="title">
@@ -354,7 +354,7 @@
                           <number>0</number>
                          </property>
                          <item>
-                          <widget class="QFrame" name="frame_2">
+                          <widget class="QFrame" name="simbtn1">
                            <property name="frameShape">
                             <enum>QFrame::Shape::Box</enum>
                            </property>
@@ -407,7 +407,7 @@
                           </widget>
                          </item>
                          <item>
-                          <widget class="QFrame" name="frame">
+                          <widget class="QFrame" name="simbtn2">
                            <property name="frameShape">
                             <enum>QFrame::Shape::Box</enum>
                            </property>
@@ -586,6 +586,29 @@
                            </property>
                            <property name="value">
                             <double>0.010000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="3" column="2">
+                          <widget class="QLabel" name="label">
+                           <property name="text">
+                            <string>Timeout [s]</string>
+                           </property>
+                           <property name="alignment">
+                            <set>Qt::AlignmentFlag::AlignCenter</set>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="3" column="3">
+                          <widget class="QDoubleSpinBox" name="timeout">
+                           <property name="decimals">
+                            <number>0</number>
+                           </property>
+                           <property name="maximum">
+                            <double>2000.000000000000000</double>
+                           </property>
+                           <property name="singleStep">
+                            <double>1.000000000000000</double>
                            </property>
                           </widget>
                          </item>
@@ -935,9 +958,15 @@
     <property name="title">
      <string>Plik</string>
     </property>
+    <addaction name="actionUstawienia"/>
    </widget>
    <addaction name="menuPlik"/>
   </widget>
+  <action name="actionUstawienia">
+   <property name="text">
+    <string>Ustawienia</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
