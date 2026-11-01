@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
-#include <vector>
 #include "tctelemetry.h"
 
 class OdbiornikCom : public QObject
@@ -15,18 +14,19 @@ public:
 
     //x
     QSerialPort *serialPort;
-    std::vector<QString> avalaiblePorts;
-    unsigned int index;
 
     //fx
-    bool openCOM(const QString &portname);
-    void closeCOM();
     void parseComData();
 
+public slots:
+    void podlaczCom(const QString &portname);
+    void rozlaczCom();
 private:
     QByteArray daneCOM;
+    QString podlaczonyCOM;
 signals:
     void parsedData(TELEMETRY telemetria);
+    void connResult(bool result, QString result_string);
 };
 
 #endif // ODBIORNIKCOM_H

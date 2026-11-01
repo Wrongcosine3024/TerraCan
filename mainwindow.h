@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <qlistwidget.h>
-#include "odbiornikcom.h"
+#include "odbiornikcom_worker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,7 +18,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
-    void logMessage(const QString &message);
+    void comlistrefresh();
 
 private slots:
     void on_com_list_itemClicked(QListWidgetItem *item);
@@ -27,8 +27,14 @@ private slots:
 
     void refreshConsole(const TELEMETRY &telemetria);
 
+    void on_refresh_clicked();
+
+    void connResult(bool result, QString result_string);
+
+    void on_clear_clicked();
+
 private:
     Ui::MainWindow *ui;
-    OdbiornikCom *radio;
+    OdbiornikWorker *comWorker;
 };
 #endif // MAINWINDOW_H

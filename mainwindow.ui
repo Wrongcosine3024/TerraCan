@@ -96,7 +96,7 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,3,3">
             <item>
-             <widget class="QFrame" name="telemetry_container">
+             <widget class="QFrame" name="tab_list_container">
               <property name="frameShape">
                <enum>QFrame::Shape::StyledPanel</enum>
               </property>
@@ -120,19 +120,531 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QTabWidget" name="tabWidget">
-                 <property name="currentIndex">
-                  <number>2</number>
+                <widget class="QTabWidget" name="tab_list">
+                 <property name="tabShape">
+                  <enum>QTabWidget::TabShape::Rounded</enum>
                  </property>
-                 <widget class="QWidget" name="tab_3">
+                 <property name="currentIndex">
+                  <number>1</number>
+                 </property>
+                 <widget class="QWidget" name="Telemetria">
                   <attribute name="title">
-                   <string>Tab 1</string>
+                   <string>Telemetria</string>
                   </attribute>
+                  <layout class="QHBoxLayout" name="horizontalLayout_7">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QFrame" name="container">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_6">
+                      <item>
+                       <widget class="QFrame" name="mission_state_container">
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::Box</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_8">
+                         <item>
+                          <widget class="QLabel" name="nochange">
+                           <property name="text">
+                            <string>STAN MISJI:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="state">
+                           <property name="text">
+                            <string>-</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QFrame" name="primary_container">
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::Box</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
+                        </property>
+                        <layout class="QGridLayout" name="gridLayout">
+                         <item row="0" column="0">
+                          <widget class="QLabel" name="nochange_3">
+                           <property name="text">
+                            <string>Temperatura:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="1">
+                          <widget class="QLabel" name="temperature">
+                           <property name="text">
+                            <string>-</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="0">
+                          <widget class="QLabel" name="nochange_4">
+                           <property name="text">
+                            <string>Ciśnienie</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="1">
+                          <widget class="QLabel" name="pressure">
+                           <property name="text">
+                            <string>-</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QFrame" name="speeds">
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::Box</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_9">
+                         <item>
+                          <widget class="QLabel" name="nochange_5">
+                           <property name="text">
+                            <string>Prędkość</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="vx">
+                           <property name="text">
+                            <string>X: - m/s</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="vy">
+                           <property name="text">
+                            <string>Y: - m/s</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="vz">
+                           <property name="text">
+                            <string>Z: - m/s</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QFrame" name="GPS_coords_container">
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::Box</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_10">
+                         <item>
+                          <widget class="QLabel" name="nochange_2">
+                           <property name="text">
+                            <string>Lokalizacja GPS:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="latitude">
+                           <property name="text">
+                            <string>- N</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="longitude">
+                           <property name="text">
+                            <string>- E</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
-                 <widget class="QWidget" name="tab_4">
+                 <widget class="QWidget" name="symulacja_tab">
                   <attribute name="title">
-                   <string>Tab 2</string>
+                   <string>Symulacja</string>
                   </attribute>
+                  <layout class="QVBoxLayout" name="verticalLayout_7" stretch="3,1">
+                   <item>
+                    <widget class="QFrame" name="sim_setup">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_8" stretch="3,0">
+                      <property name="spacing">
+                       <number>0</number>
+                      </property>
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QFrame" name="start_container">
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::Box</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_11">
+                         <property name="spacing">
+                          <number>0</number>
+                         </property>
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QFrame" name="frame_2">
+                           <property name="frameShape">
+                            <enum>QFrame::Shape::Box</enum>
+                           </property>
+                           <property name="frameShadow">
+                            <enum>QFrame::Shadow::Raised</enum>
+                           </property>
+                           <layout class="QVBoxLayout" name="verticalLayout_9">
+                            <property name="spacing">
+                             <number>3</number>
+                            </property>
+                            <property name="leftMargin">
+                             <number>5</number>
+                            </property>
+                            <property name="topMargin">
+                             <number>5</number>
+                            </property>
+                            <property name="rightMargin">
+                             <number>5</number>
+                            </property>
+                            <property name="bottomMargin">
+                             <number>5</number>
+                            </property>
+                            <item>
+                             <widget class="QPushButton" name="startSIM">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="text">
+                               <string>Uruchom SIM</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="clear">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="text">
+                               <string>Wyczyść</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QFrame" name="frame">
+                           <property name="frameShape">
+                            <enum>QFrame::Shape::Box</enum>
+                           </property>
+                           <property name="frameShadow">
+                            <enum>QFrame::Shadow::Raised</enum>
+                           </property>
+                           <layout class="QHBoxLayout" name="horizontalLayout_13">
+                            <item>
+                             <widget class="QCheckBox" name="checkBox_2">
+                              <property name="text">
+                               <string>Tryb auto</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QCheckBox" name="checkBox">
+                              <property name="text">
+                               <string>Pokaż wyniki w nowym oknie</string>
+                              </property>
+                              <property name="tristate">
+                               <bool>false</bool>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QFrame" name="numbers_grid">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::Box</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
+                        </property>
+                        <layout class="QGridLayout" name="gridLayout_2">
+                         <item row="2" column="2">
+                          <widget class="QDoubleSpinBox" name="vel_y">
+                           <property name="decimals">
+                            <number>1</number>
+                           </property>
+                           <property name="maximum">
+                            <double>200.000000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="2" column="0">
+                          <widget class="QLabel" name="label_19">
+                           <property name="text">
+                            <string>Prędkość startowa [m/s]</string>
+                           </property>
+                           <property name="alignment">
+                            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="3">
+                          <widget class="QLabel" name="label_17">
+                           <property name="text">
+                            <string>Z</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="2" column="3">
+                          <widget class="QDoubleSpinBox" name="vel_z">
+                           <property name="decimals">
+                            <number>1</number>
+                           </property>
+                           <property name="maximum">
+                            <double>200.000000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="3" column="0">
+                          <widget class="QLabel" name="label_20">
+                           <property name="text">
+                            <string>Krok czasowy (dt)</string>
+                           </property>
+                           <property name="alignment">
+                            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="1">
+                          <widget class="QLabel" name="label_15">
+                           <property name="text">
+                            <string>X</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="2" column="1">
+                          <widget class="QDoubleSpinBox" name="vel_x">
+                           <property name="decimals">
+                            <number>1</number>
+                           </property>
+                           <property name="maximum">
+                            <double>200.000000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="2">
+                          <widget class="QDoubleSpinBox" name="pos_y">
+                           <property name="decimals">
+                            <number>1</number>
+                           </property>
+                           <property name="maximum">
+                            <double>10000.000000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="1">
+                          <widget class="QDoubleSpinBox" name="pos_x">
+                           <property name="decimals">
+                            <number>1</number>
+                           </property>
+                           <property name="maximum">
+                            <double>10000.000000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="3">
+                          <widget class="QDoubleSpinBox" name="pos_z">
+                           <property name="decimals">
+                            <number>1</number>
+                           </property>
+                           <property name="maximum">
+                            <double>10000.000000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="0">
+                          <widget class="QLabel" name="label_18">
+                           <property name="text">
+                            <string>Pozycja startowa [m]</string>
+                           </property>
+                           <property name="alignment">
+                            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="0" column="2">
+                          <widget class="QLabel" name="label_16">
+                           <property name="text">
+                            <string>Y</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="3" column="1">
+                          <widget class="QDoubleSpinBox" name="dt">
+                           <property name="decimals">
+                            <number>3</number>
+                           </property>
+                           <property name="minimum">
+                            <double>0.001000000000000</double>
+                           </property>
+                           <property name="maximum">
+                            <double>1.000000000000000</double>
+                           </property>
+                           <property name="singleStep">
+                            <double>0.001000000000000</double>
+                           </property>
+                           <property name="value">
+                            <double>0.010000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="simoutput_container">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_12">
+                      <property name="spacing">
+                       <number>0</number>
+                      </property>
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QPlainTextEdit" name="sim_output">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="lineWrapMode">
+                         <enum>QPlainTextEdit::LineWrapMode::NoWrap</enum>
+                        </property>
+                        <property name="textInteractionFlags">
+                         <set>Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                  <widget class="QWidget" name="COM_tab">
                   <attribute name="title">
@@ -162,15 +674,15 @@
                      <property name="frameShadow">
                       <enum>QFrame::Shadow::Raised</enum>
                      </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,1,1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,1,1,0">
                       <property name="spacing">
-                       <number>0</number>
+                       <number>5</number>
                       </property>
                       <item>
                        <widget class="QLabel" name="wybrano">
                         <property name="maximumSize">
                          <size>
-                          <width>90</width>
+                          <width>80</width>
                           <height>16777215</height>
                          </size>
                         </property>
@@ -188,6 +700,12 @@
                       </item>
                       <item>
                        <widget class="QPushButton" name="COM_connect">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
                         <property name="maximumSize">
                          <size>
                           <width>120</width>
@@ -202,6 +720,19 @@
                         </property>
                         <property name="checked">
                          <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="refresh">
+                        <property name="maximumSize">
+                         <size>
+                          <width>25</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>O</string>
                         </property>
                        </widget>
                       </item>
@@ -263,6 +794,7 @@
               <property name="frameShadow">
                <enum>QFrame::Shadow::Raised</enum>
               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_5"/>
              </widget>
             </item>
             <item>
@@ -311,6 +843,9 @@
                </property>
                <item>
                 <widget class="QPlainTextEdit" name="konsola">
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
+                 </property>
                  <property name="horizontalScrollBarPolicy">
                   <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
                  </property>
@@ -366,7 +901,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>609</width>
-                    <height>327</height>
+                    <height>251</height>
                    </rect>
                   </property>
                  </widget>
