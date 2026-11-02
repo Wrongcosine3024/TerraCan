@@ -27,14 +27,14 @@ public:
     unsigned int dzielnik;
     void zatrzymaj();   //funkcja przerywajaca petle obliczen
 public slots:
-    std::vector<float> derive();
+    std::vector<Output> derive();
 private:
     QSettings ustawienia;
     const float g = 9.81;
     const float pi = 3.14159;
     bool running = true;    //zmienna pomocnicza sluzaca do przerwania petli obliczen
 signals:
-    void skonczylem();
+    void skonczylem(std::vector<Output> wyniki, bool czyZnalezionoPLadowania);
     void krokPoliczony(QString line);
 };
 

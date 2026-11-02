@@ -32,4 +32,12 @@ struct CanSat
     Vec3 F;    //sila dla kazdej z osi
 };
 
+struct Output{
+    Vec3 pos;
+    Vec3 vel;
+    Vec3 acc;
+    Vec2 rot;
+    float sim_time;
+};
+
 #endif // PHYSICSUTILS_H

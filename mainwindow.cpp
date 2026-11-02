@@ -140,10 +140,18 @@ void MainWindow::on_startSIM_clicked()
         emit pHandler->policz();
 
         connect(pHandler, &PhysicsHandler::krokPoliczony, this, &MainWindow::physConsole);
-        connect(pHandler, &PhysicsHandler::obliczone, this, [this](){
+        connect(pHandler, &PhysicsHandler::obliczone, this, [this](std::vector<Output> wyniki,bool result){
+            if(!wyniki.empty()){
+                simOutput = wyniki;
+                ui->sim_output->appendPlainText("Zapisano wyniki symulacji.");
+            }
             //watek zakonczyl prace - usuniecie watku
             pHandler->deleteLater();
             pHandler = nullptr;
+            //podanie punktu ladowania (jesli znaleziono)
+            if(result){
+                ui->sim_output->appendPlainText("Znaleziono punkt lądowania! X: " + QString::number(wyniki.back().pos.x) + " Y: " + QString::number(wyniki.back().pos.y));
+            }
             //reset ui
             ui->clear->setDisabled(false);
             ui->simbtn2->setDisabled(false);

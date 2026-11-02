@@ -44,5 +44,6 @@ private:
     Ui::MainWindow *ui;
     OdbiornikWorker *comWorker;
     PhysicsHandler *pHandler = nullptr;
+    std::vector<Output> simOutput;
 };
 #endif // MAINWINDOW_H

@@ -12,14 +12,26 @@ qt_add_executable(TerraCan_MissionControl
     mainwindow.h
     mainwindow.ui
     tctelemetry.h
-    odbiornikcom.h odbiornikcom.cpp
-    odbiornikcom_worker.h
-    odbiornikcom_worker.cpp
-    physicsengine.h physicsengine.cpp
-    physicsutils.h
+    # odbiornikcom.h odbiornikcom.cpp
+    # odbiornikcom_worker.h
+    # odbiornikcom_worker.cpp
+    comhandler/odbiornikcom.cpp
+    comhandler/odbiornikcom.h
+    comhandler/odbiornikcom_worker.cpp
+    comhandler/odbiornikcom_worker.h
+    physics/physicsengine.cpp
+    physics/physicsengine.h
+    physics/physicshandler.cpp
+    physics/physicshandler.h
+    physics/physicsutils.h
     settingdialog.h settingdialog.cpp settingdialog.ui
-    physicshandler.h physicshandler.cpp
 
+)
+
+target_include_directories(TerraCan_MissionControl PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/physics
+    ${CMAKE_CURRENT_SOURCE_DIR}/comhandler
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 qt_add_translations(

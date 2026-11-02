@@ -32,7 +32,7 @@ float isa_air_density(float H){
     return p;
 }
 
-std::vector<float> PhysicsEngine::derive(){
+std::vector<Output> PhysicsEngine::derive(){
     TerraCan.pos.x = x_start;
     TerraCan.pos.y = y_start;
     TerraCan.pos.z = z_start;
@@ -40,12 +40,13 @@ std::vector<float> PhysicsEngine::derive(){
     TerraCan.vel.x = vx_start;
     TerraCan.vel.y = vy_start;
     TerraCan.vel.z = vz_start;
-    std::vector<float> wyniki;
+    std::vector<Output> wyniki;
     float V_total, Fd, p;
     const float Fg = -(TerraCan.mass * g);
-
+    bool zmiejsce_ladowania = false;
     for (int i = 0; i < timeout; i++)
     {
+        Output aKrok;
         float t = i * dt;   //aktualna sekunda
         V_total = sqrt(pow(TerraCan.vel.x,2)+pow(TerraCan.vel.y,2)+pow(TerraCan.vel.z,2));  // wartosc wektora predkosci - predkosc wypadkowa
         p = isa_air_density(TerraCan.pos.z);
@@ -95,16 +96,19 @@ std::vector<float> PhysicsEngine::derive(){
         TerraCan.pos.y += TerraCan.vel.y * dt;
         TerraCan.pos.z += TerraCan.vel.z * dt;
 
-        wyniki.push_back(TerraCan.pos.x);
-        wyniki.push_back(TerraCan.pos.y);
-        wyniki.push_back(TerraCan.pos.z);
+        aKrok.pos.x = TerraCan.pos.x;
+        aKrok.pos.y = TerraCan.pos.y;
+        aKrok.pos.z = TerraCan.pos.z;
 
-        wyniki.push_back(TerraCan.vel.x);
-        wyniki.push_back(TerraCan.vel.y);
-        wyniki.push_back(TerraCan.vel.z);
+        aKrok.vel.x = TerraCan.vel.x;
+        aKrok.vel.y = TerraCan.vel.y;
+        aKrok.vel.z = TerraCan.vel.z;
 
-        wyniki.push_back(TerraCan.rot.x);
-        wyniki.push_back(TerraCan.rot.y);
+        aKrok.rot.x = TerraCan.rot.x;
+        aKrok.rot.y = TerraCan.rot.y;
+
+        aKrok.sim_time = t;
+        wyniki.push_back(aKrok);
 
         QString line = "X: " + QString::number(TerraCan.pos.x, 'f', 2) + " Y: " + QString::number(TerraCan.pos.y, 'f', 2) + " Z: " + QString::number(TerraCan.pos.z, 'f', 2)
             + " vX: " + QString::number(TerraCan.vel.x, 'f', 2) + " vY: " + QString::number(TerraCan.vel.y, 'f', 2) + " vZ: " + QString::number(TerraCan.vel.z, 'f', 2)
@@ -115,9 +119,13 @@ std::vector<float> PhysicsEngine::derive(){
             QThread::msleep(1);
         }
         if(!running) break;
-        if(TerraCan.pos.z < 0 ) break;
+        if(TerraCan.pos.z < 0 ){
+            zmiejsce_ladowania = true;
+            break;
+        }
+
     }
-    emit skonczylem();
+    emit skonczylem(wyniki, zmiejsce_ladowania);
     return wyniki;
 }
 

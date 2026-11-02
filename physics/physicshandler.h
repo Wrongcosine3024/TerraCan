@@ -18,7 +18,7 @@ public:
 public slots:
 
 signals:
-    void obliczone();
+    void obliczone(std::vector<Output> wyniki, bool czyZnalezionoPLadowania);
     void policz();
     void krokPoliczony(QString line);
 };
