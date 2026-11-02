@@ -18,6 +18,7 @@ qt_add_executable(TerraCan_MissionControl
     physicsengine.h physicsengine.cpp
     physicsutils.h
     settingdialog.h settingdialog.cpp settingdialog.ui
+    physicshandler.h physicshandler.cpp
 
 )
 

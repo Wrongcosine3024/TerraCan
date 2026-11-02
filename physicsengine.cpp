@@ -1,9 +1,29 @@
 #include "physicsengine.h"
 #include <qthread.h>
 
-PhysicsEngine::PhysicsEngine(QObject *parent)
+PhysicsEngine::PhysicsEngine(QObject *parent, startData dane_uzytkownika)
     : QObject{parent}
 {
+    TerraCan.mass = ustawienia.value("TerraCan/mass", 0.32).toDouble();
+    TerraCan.A = ustawienia.value("TerraCan/Cd", 0.0045).toDouble();
+    TerraCan.Cd = ustawienia.value("TerraCan/opor", 0.8).toDouble();
+    dzielnik = ustawienia.value("TerraCan/dzielnik", 100).toInt();
+    chute_delay = ustawienia.value("TerraCan/chute", 0).toFloat();
+
+    x_start = dane_uzytkownika.pos_x;
+    y_start = dane_uzytkownika.pos_y;
+    z_start = dane_uzytkownika.pos_z;
+    vx_start = dane_uzytkownika.vel_x;
+    vy_start = dane_uzytkownika.vel_y;
+    vz_start = dane_uzytkownika.vel_z;
+    dt = dane_uzytkownika.dt;
+    timeout = dane_uzytkownika.timeout/dane_uzytkownika.dt;
+
+    const int k = 0.01*dzielnik;
+    dzielnik = k/dt;
+
+    running = true;
+
 }
 
 float isa_air_density(float H){
@@ -26,7 +46,7 @@ std::vector<float> PhysicsEngine::derive(){
 
     for (int i = 0; i < timeout; i++)
     {
-        float t = i * dt;
+        float t = i * dt;   //aktualna sekunda
         V_total = sqrt(pow(TerraCan.vel.x,2)+pow(TerraCan.vel.y,2)+pow(TerraCan.vel.z,2));  // wartosc wektora predkosci - predkosc wypadkowa
         p = isa_air_density(TerraCan.pos.z);
 
@@ -90,13 +110,17 @@ std::vector<float> PhysicsEngine::derive(){
             + " vX: " + QString::number(TerraCan.vel.x, 'f', 2) + " vY: " + QString::number(TerraCan.vel.y, 'f', 2) + " vZ: " + QString::number(TerraCan.vel.z, 'f', 2)
             + " rX: " + QString::number(TerraCan.rot.x, 'f', 2) + " rY: " + QString::number(TerraCan.rot.y, 'f', 2) + " Czas: " + QString::number(t, 'f', 2);
 
-        if(i%100 == 0){
+        if(i%dzielnik == 0){
             emit krokPoliczony(line);
-            QThread::msleep(5);
+            QThread::msleep(1);
         }
-
+        if(!running) break;
         if(TerraCan.pos.z < 0 ) break;
     }
     emit skonczylem();
     return wyniki;
+}
+
+void PhysicsEngine::zatrzymaj(){
+    running = false;
 }

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <qlistwidget.h>
 #include "odbiornikcom_worker.h"
+#include "physicshandler.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -42,5 +43,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     OdbiornikWorker *comWorker;
+    PhysicsHandler *pHandler = nullptr;
 };
 #endif // MAINWINDOW_H

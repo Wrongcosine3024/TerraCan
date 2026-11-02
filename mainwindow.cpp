@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "physicsengine.h"
 #include "settingdialog.h"
 #include "ui_mainwindow.h"
 #include <QSerialPortInfo>
@@ -107,45 +106,51 @@ void MainWindow::physConsole(QString line){
 
 void MainWindow::on_startSIM_clicked()
 {
-    QSettings ustawienia;
-    //ui setup
-    ui->simbtn1->setDisabled(true);
-    ui->simbtn2->setDisabled(true);
-    ui->numbers_grid->setDisabled(true);
-    ui->startSIM->setText("W trakcie...");
+    if(pHandler != nullptr){        //pHandler zainicjalizowany czyli przycisk aktywowany 2 raz
 
-    //phys thread setup
-    QThread *physicsThread = new QThread(this);
-    PhysicsEngine *physics_engine = new PhysicsEngine;
-    //ustawianie danych od uzytkownika
-    physics_engine->TerraCan.mass = ustawienia.value("TerraCan/mass", 0.32).toDouble();
-    physics_engine->TerraCan.A = ustawienia.value("TerraCan/Cd", 0.0045).toDouble();
-    physics_engine->TerraCan.Cd = ustawienia.value("TerraCan/opor", 0.8).toDouble();
+        //usuniecie phandlera
+        pHandler->zatrzymaj();
+        pHandler->deleteLater();
+        pHandler = nullptr;
 
-    physics_engine->x_start = ui->pos_x->value();
-    physics_engine->y_start = ui->pos_y->value();
-    physics_engine->z_start = ui->pos_z->value();
-    physics_engine->vx_start = ui->vel_x->value();
-    physics_engine->vy_start = ui->vel_y->value();
-    physics_engine->vz_start = ui->vel_z->value();
-    physics_engine->dt = ui->dt->value();
-    double tt = ui->timeout->value()/ui->dt->value();
-    physics_engine->timeout = qRound(tt);
+        //reset ui
+        ui->sim_output->appendPlainText("Symulacja przerwana");
 
-    physics_engine->moveToThread(physicsThread);
-    connect(physicsThread, &QThread::started, physics_engine, &PhysicsEngine::derive);
-    connect(physicsThread, &QThread::finished, physics_engine, &QObject::deleteLater);
-    connect(physicsThread, &QThread::finished, physicsThread, &QObject::deleteLater);
-    connect(physics_engine, &PhysicsEngine::skonczylem, physicsThread, &QThread::quit);
-
-    connect(physics_engine, &PhysicsEngine::krokPoliczony, this, &MainWindow::physConsole);
-    connect(physicsThread, &QThread::finished, this, [this]() {
-        ui->simbtn1->setDisabled(false);
+        ui->clear->setDisabled(false);
         ui->simbtn2->setDisabled(false);
         ui->numbers_grid->setDisabled(false);
         ui->startSIM->setText("Uruchom SIM");
-    });
-    physicsThread->start();
+    }else{
+        //odebranie wejscia z aplikacji
+        startData input = {static_cast<float>(ui->pos_x->value()),
+                           static_cast<float>(ui->pos_y->value()),
+                           static_cast<float>(ui->pos_z->value()),
+                           static_cast<float>(ui->vel_x->value()),
+                           static_cast<float>(ui->vel_y->value()),
+                           static_cast<float>(ui->vel_z->value()),
+                           static_cast<float>(ui->dt->value()),
+                           static_cast<float>(ui->timeout->value())};
+        pHandler = new PhysicsHandler(this, input); //inicjalizacja workera watku fizyki
+        //blokada ui
+        ui->clear->setDisabled(true);
+        ui->simbtn2->setDisabled(true);
+        ui->numbers_grid->setDisabled(true);
+        ui->startSIM->setText("W trakcie... (zatrzymaj)");
+
+        emit pHandler->policz();
+
+        connect(pHandler, &PhysicsHandler::krokPoliczony, this, &MainWindow::physConsole);
+        connect(pHandler, &PhysicsHandler::obliczone, this, [this](){
+            //watek zakonczyl prace - usuniecie watku
+            pHandler->deleteLater();
+            pHandler = nullptr;
+            //reset ui
+            ui->clear->setDisabled(false);
+            ui->simbtn2->setDisabled(false);
+            ui->numbers_grid->setDisabled(false);
+            ui->startSIM->setText("Uruchom SIM");
+        });
+    }
 }
 
 
@@ -153,7 +158,7 @@ void MainWindow::on_actionUstawienia_triggered()
 {
     SettingDialog okno_ustawien(this);
     if(okno_ustawien.exec() == QDialog::Accepted){
-        ;
+        QSettings settings;
+        ui->konsola->setMaximumBlockCount(settings.value("TerraCan/logcount", 100000).toInt());
     }
 }
-

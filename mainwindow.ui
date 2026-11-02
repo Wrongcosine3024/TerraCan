@@ -125,7 +125,7 @@
                   <enum>QTabWidget::TabShape::Rounded</enum>
                  </property>
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>1</number>
                  </property>
                  <widget class="QWidget" name="Telemetria">
                   <attribute name="title">
@@ -304,7 +304,7 @@
                   <attribute name="title">
                    <string>Symulacja</string>
                   </attribute>
-                  <layout class="QVBoxLayout" name="verticalLayout_7" stretch="3,1">
+                  <layout class="QVBoxLayout" name="verticalLayout_7" stretch="1,2">
                    <item>
                     <widget class="QFrame" name="sim_setup">
                      <property name="frameShape">
@@ -881,6 +881,9 @@
                  <property name="readOnly">
                   <bool>true</bool>
                  </property>
+                 <property name="maximumBlockCount">
+                  <number>100000</number>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -924,7 +927,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>609</width>
-                    <height>251</height>
+                    <height>178</height>
                    </rect>
                   </property>
                  </widget>
