@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(TerraCan_MissionControl LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools SerialPort Location Quick Concurrent)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools SerialPort Location Quick Concurrent DataVisualization)
 
 qt_standard_project_setup()
 
@@ -25,6 +25,9 @@ qt_add_executable(TerraCan_MissionControl
     physics/physicshandler.h
     physics/physicsutils.h
     settingdialog.h settingdialog.cpp settingdialog.ui
+    chart3d.h chart3d.cpp
+    mapwidget.h mapwidget.cpp
+
 
 )
 
@@ -33,6 +36,39 @@ target_include_directories(TerraCan_MissionControl PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/comhandler
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+# Marble lib
+
+set(MARBLE_DIR "${CMAKE_SOURCE_DIR}/marble")
+
+target_include_directories(TerraCan_MissionControl PRIVATE
+    "${MARBLE_DIR}/include"
+)
+
+target_link_directories(TerraCan_MissionControl PRIVATE
+    "${MARBLE_DIR}/lib"
+)
+
+target_link_libraries(TerraCan_MissionControl PRIVATE
+    marblewidget-qt6
+)
+
+# Marble DLL copying
+
+add_custom_command(TARGET TerraCan_MissionControl POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${MARBLE_DIR}/libmarblewidget-qt6.dll"
+    $<TARGET_FILE_DIR:TerraCan_MissionControl>
+)
+
+# LibAstro DLL copying
+
+add_custom_command(TARGET TerraCan_MissionControl POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${MARBLE_DIR}/libastro.dll"
+    $<TARGET_FILE_DIR:TerraCan_MissionControl>
+)
+
 
 qt_add_translations(
     TARGETS TerraCan_MissionControl
@@ -47,6 +83,7 @@ target_link_libraries(TerraCan_MissionControl
         Qt6::Quick
         Qt6::Location
         Qt6::Concurrent
+        Qt6::DataVisualization
 )
 
 install(TARGETS TerraCan_MissionControl

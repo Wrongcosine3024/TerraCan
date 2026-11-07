@@ -17,6 +17,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(comWorker, &OdbiornikWorker::newData, this, &MainWindow::refreshConsole);
     connect(comWorker, &OdbiornikWorker::connResult, this, &MainWindow::connResult);
     comlistrefresh();
+
+    //map init
+    map_widget_class = new MapWidget(this);
+    ui->map_layout->addWidget(map_widget_class->map_widget);
 }
 
 MainWindow::~MainWindow()
@@ -135,7 +139,7 @@ void MainWindow::on_startSIM_clicked()
         ui->clear->setDisabled(true);
         ui->simbtn2->setDisabled(true);
         ui->numbers_grid->setDisabled(true);
-        ui->startSIM->setText("W trakcie... (zatrzymaj)");
+        ui->startSIM->setText("...(zatrzymaj)");
 
         emit pHandler->policz();
 
@@ -170,3 +174,10 @@ void MainWindow::on_actionUstawienia_triggered()
         ui->konsola->setMaximumBlockCount(settings.value("TerraCan/logcount", 100000).toInt());
     }
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+    int index = ui->stackedWidget->currentIndex();
+    ui->stackedWidget->setCurrentIndex(index + 1);
+}
+

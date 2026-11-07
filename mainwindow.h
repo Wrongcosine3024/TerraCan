@@ -5,6 +5,7 @@
 #include <qlistwidget.h>
 #include "odbiornikcom_worker.h"
 #include "physicshandler.h"
+#include "mapwidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -40,10 +41,13 @@ private slots:
 
     void on_actionUstawienia_triggered();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     OdbiornikWorker *comWorker;
     PhysicsHandler *pHandler = nullptr;
     std::vector<Output> simOutput;
+    MapWidget *map_widget_class;
 };
 #endif // MAINWINDOW_H
