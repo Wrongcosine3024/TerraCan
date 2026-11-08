@@ -32,7 +32,7 @@
    <string>TerraCan Mission Control</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <layout class="QVBoxLayout" name="verticalLayout_10">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -416,14 +416,14 @@
                            </property>
                            <layout class="QHBoxLayout" name="horizontalLayout_13">
                             <item>
-                             <widget class="QCheckBox" name="checkBox_2">
+                             <widget class="QCheckBox" name="auto_mode">
                               <property name="text">
                                <string>Tryb auto</string>
                               </property>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QCheckBox" name="checkBox">
+                             <widget class="QCheckBox" name="new_window">
                               <property name="text">
                                <string>Pokaż wyniki w nowym oknie</string>
                               </property>
@@ -959,12 +959,43 @@
        </layout>
       </widget>
       <widget class="QWidget" name="sim_view">
-       <layout class="QHBoxLayout" name="horizontalLayout_14">
-        <property name="topMargin">
-         <number>18</number>
-        </property>
+       <layout class="QVBoxLayout" name="verticalLayout_11">
         <item>
-         <widget class="QWidget" name="tdvisualization" native="true"/>
+         <widget class="QFrame" name="frame">
+          <property name="frameShape">
+           <enum>QFrame::Shape::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Shadow::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_15">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="wykres3D_layout"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="powrot">
+          <property name="text">
+           <string>Powrót</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

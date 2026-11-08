@@ -5,6 +5,12 @@
 #include <QDateTime>
 #include <qsettings.h>
 #include <qthread.h>
+#include <marble/GeoDataCoordinates.h>
+#include <marble/GeoDataPoint.h>
+#include <marble/GeoDataPlacemark.h>
+#include <marble/GeoDataDocument.h>
+#include <marble/MarbleModel.h>
+#include <marble/GeoDataTreeModel.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -13,14 +19,25 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     //COM init
+    comStatus = 0;
     comWorker = new OdbiornikWorker(this);
-    connect(comWorker, &OdbiornikWorker::newData, this, &MainWindow::refreshConsole);
+    connect(comWorker, &OdbiornikWorker::newData, this, &MainWindow::refreshUI);
     connect(comWorker, &OdbiornikWorker::connResult, this, &MainWindow::connResult);
     comlistrefresh();
 
     //map init
     map_widget_class = new MapWidget(this);
     ui->map_layout->addWidget(map_widget_class->map_widget);
+    map_widget_class->map_widget->centerOn(19.93, 50.06);
+    map_widget_class->map_widget->setZoom(2500);
+
+    //chart init
+    wykres = new Chart3D;
+    ui->wykres3D_layout->addWidget(wykres->getWidget());
+
+    //auto mode setup
+    autoModeTimeout = new QTimer(this);
+    connect(autoModeTimeout, &QTimer::timeout, this, &MainWindow::autoMode);
 }
 
 MainWindow::~MainWindow()
@@ -67,6 +84,7 @@ void MainWindow::on_COM_connect_toggled(bool checked)               // łączeni
 }
 
 void MainWindow::connResult(bool result, QString result_string){
+    // w zaleznosci od wyniku polaczenia z portem com updateowany jest interfejs
     if(result){
         QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
         ui->konsola->appendPlainText("(LOG) " + timestamp +": " + result_string);
@@ -76,6 +94,7 @@ void MainWindow::connResult(bool result, QString result_string){
         ui->COM_connect->setEnabled(true);
         ui->COM_connect->blockSignals(false);
         ui->com_list->setDisabled(1);
+        comStatus = 1;
     } else {
         QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
         ui->konsola->appendPlainText("(LOG) " + timestamp +": " + result_string);
@@ -86,12 +105,38 @@ void MainWindow::connResult(bool result, QString result_string){
         ui->COM_connect->blockSignals(false);
         ui->COM_connect->setText("POŁĄCZ");
         ui->com_list->setDisabled(0);
+        comStatus = 0;
     }
 }
 
-void MainWindow::refreshConsole(const TELEMETRY &telemetria){
+void MainWindow::refreshUI(const TELEMETRY &telemetria){
+    aktualna_ramka = telemetria;
+    //aktualizacja UI po odebraniu telemetrii
+    //log do konsoli
     QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
     ui->konsola->appendPlainText("(LOG) " + timestamp + ": Nr.Pakietu " + QString::number(telemetria.SEQ) + " Czas pracy mikrokontrolera: " + QString::number(telemetria.timestamp/1000) + " Temperatura: " + QString::number(telemetria.temperature) + " Ciśnienie: " + QString::number(telemetria.pressure));
+
+    //update mapy
+    Marble::GeoDataCoordinates newPoint(telemetria.GPS_long, telemetria.GPS_lat, telemetria.GPS_alt, Marble::GeoDataCoordinates::Degree);
+
+    map_widget_class->aktualna_pozycja->setCoordinate(newPoint);
+    map_widget_class->trajektoria->append(newPoint);
+    map_widget_class->map_widget->model()->treeModel()->updateFeature(map_widget_class->aktualna_pozycja);
+    map_widget_class->map_widget->model()->treeModel()->updateFeature(map_widget_class->znacznik_linii);
+    //map_widget_class->map_widget->centerOn(newPoint);
+
+    //update zakladki telemetria
+    switch (telemetria.state) {
+    case 0:
+        ui->state->setText("PRELAUNCH");
+        break;
+    default:
+        break;
+    }
+    ui->pressure->setText(QString::number(telemetria.pressure));
+    ui->temperature->setText(QString::number(telemetria.temperature));
+    ui->latitude->setText(QString::number(telemetria.GPS_lat));
+    ui->longitude->setText(QString::number(telemetria.GPS_long));
 }
 
 void MainWindow::on_refresh_clicked()
@@ -110,59 +155,142 @@ void MainWindow::physConsole(QString line){
 
 void MainWindow::on_startSIM_clicked()
 {
-    if(pHandler != nullptr){        //pHandler zainicjalizowany czyli przycisk aktywowany 2 raz
+    if(autoModeTimeout->isActive()){
+        autoModeTimeout->stop();
 
-        //usuniecie phandlera
-        pHandler->zatrzymaj();
-        pHandler->deleteLater();
-        pHandler = nullptr;
-
-        //reset ui
-        ui->sim_output->appendPlainText("Symulacja przerwana");
+        if (pHandler != nullptr) {
+            pHandler->zatrzymaj();
+            pHandler->deleteLater();
+            pHandler = nullptr;
+        }
 
         ui->clear->setDisabled(false);
         ui->simbtn2->setDisabled(false);
-        ui->numbers_grid->setDisabled(false);
         ui->startSIM->setText("Uruchom SIM");
-    }else{
-        //odebranie wejscia z aplikacji
-        startData input = {static_cast<float>(ui->pos_x->value()),
-                           static_cast<float>(ui->pos_y->value()),
-                           static_cast<float>(ui->pos_z->value()),
-                           static_cast<float>(ui->vel_x->value()),
-                           static_cast<float>(ui->vel_y->value()),
-                           static_cast<float>(ui->vel_z->value()),
-                           static_cast<float>(ui->dt->value()),
-                           static_cast<float>(ui->timeout->value())};
-        pHandler = new PhysicsHandler(this, input); //inicjalizacja workera watku fizyki
-        //blokada ui
-        ui->clear->setDisabled(true);
-        ui->simbtn2->setDisabled(true);
-        ui->numbers_grid->setDisabled(true);
-        ui->startSIM->setText("...(zatrzymaj)");
-
-        emit pHandler->policz();
-
-        connect(pHandler, &PhysicsHandler::krokPoliczony, this, &MainWindow::physConsole);
-        connect(pHandler, &PhysicsHandler::obliczone, this, [this](std::vector<Output> wyniki,bool result){
-            if(!wyniki.empty()){
-                simOutput = wyniki;
-                ui->sim_output->appendPlainText("Zapisano wyniki symulacji.");
+        ui->sim_output->appendPlainText("Wyłączono tryb automatyczny");
+    } else {
+        if(ui->auto_mode->isChecked()){
+            if(comStatus){
+                autoModeTimeout->start(10000);
+                ui->startSIM->setText("Tryb AUTO");
+                ui->clear->setDisabled(true);
+                ui->simbtn2->setDisabled(true);
+                ui->sim_output->appendPlainText("Aktywowano tryb automatyczny, symulacja będzie aktualizowana z bieżącymi parametrami co 15 sekund.");
+            }else{
+                ui->sim_output->appendPlainText("Tryb automatyczny wymaga aktywnego połączenia z portem COM. Symulacja zakończona.");
             }
-            //watek zakonczyl prace - usuniecie watku
-            pHandler->deleteLater();
-            pHandler = nullptr;
-            //podanie punktu ladowania (jesli znaleziono)
-            if(result){
-                ui->sim_output->appendPlainText("Znaleziono punkt lądowania! X: " + QString::number(wyniki.back().pos.x) + " Y: " + QString::number(wyniki.back().pos.y));
+        } else {
+            if(pHandler != nullptr){        //pHandler zainicjalizowany czyli przycisk aktywowany 2 raz
+
+                //usuniecie phandlera
+                pHandler->zatrzymaj();
+                pHandler->deleteLater();
+                pHandler = nullptr;
+
+                //reset ui
+                ui->sim_output->appendPlainText("Symulacja przerwana");
+
+                ui->clear->setDisabled(false);
+                ui->simbtn2->setDisabled(false);
+                ui->numbers_grid->setDisabled(false);
+                ui->startSIM->setText("Uruchom SIM");
+            }else{
+                //odebranie wejscia z aplikacji
+                startData input = {static_cast<float>(ui->pos_x->value()),
+                                   static_cast<float>(ui->pos_y->value()),
+                                   static_cast<float>(ui->pos_z->value()),
+                                   static_cast<float>(ui->vel_x->value()),
+                                   static_cast<float>(ui->vel_y->value()),
+                                   static_cast<float>(ui->vel_z->value()),
+                                   static_cast<float>(ui->dt->value()),
+                                   static_cast<float>(ui->timeout->value())};
+                pHandler = new PhysicsHandler(this, input); //inicjalizacja workera watku fizyki
+                //blokada ui
+                ui->clear->setDisabled(true);
+                ui->simbtn2->setDisabled(true);
+                ui->numbers_grid->setDisabled(true);
+                ui->startSIM->setText("...(zatrzymaj)");
+
+                emit pHandler->policz();
+
+                connect(pHandler, &PhysicsHandler::krokPoliczony, this, &MainWindow::physConsole);
+                connect(pHandler, &PhysicsHandler::obliczone, wykres, &Chart3D::plotTrajectory);
+                connect(pHandler, &PhysicsHandler::obliczone, this, [this](std::vector<Output> wyniki,bool result){
+                    if(!wyniki.empty()){
+                        simOutput = wyniki;
+                        ui->sim_output->appendPlainText("Zapisano wyniki symulacji.");
+                    }
+                    //watek zakonczyl prace - usuniecie watku
+                    pHandler->deleteLater();
+                    pHandler = nullptr;
+                    //podanie punktu ladowania (jesli znaleziono)
+                    if(result){
+                        ui->sim_output->appendPlainText("Znaleziono punkt lądowania! X: " + QString::number(wyniki.back().pos.x) + " Y: " + QString::number(wyniki.back().pos.y));
+                    }
+                    //reset ui
+                    ui->clear->setDisabled(false);
+                    ui->simbtn2->setDisabled(false);
+                    ui->numbers_grid->setDisabled(false);
+                    ui->startSIM->setText("Uruchom SIM");
+                });
             }
-            //reset ui
-            ui->clear->setDisabled(false);
-            ui->simbtn2->setDisabled(false);
-            ui->numbers_grid->setDisabled(false);
-            ui->startSIM->setText("Uruchom SIM");
-        });
+        }
     }
+}
+
+void MainWindow::autoMode(){
+
+    //odebranie wejscia z aplikacji
+    //startData input = {0,0,aktualna_ramka.GPS_alt,aktualna_ramka.GPS_speed_N,aktualna_ramka.GPS_speed_E,aktualna_ramka.GPS_speed_V,0.01,1000};
+    startData input = {0,0,aktualna_ramka.GPS_alt,40,80,aktualna_ramka.GPS_speed_V,0.01,1000};
+    pHandler = new PhysicsHandler(this, input); //inicjalizacja workera watku fizyki
+
+    emit pHandler->policz();
+
+    connect(pHandler, &PhysicsHandler::krokPoliczony, this, &MainWindow::physConsole);
+    connect(pHandler, &PhysicsHandler::obliczone, wykres, &Chart3D::plotTrajectory);
+    connect(pHandler, &PhysicsHandler::obliczone, this, [this](std::vector<Output> wyniki,bool result){
+        if(!wyniki.empty()){
+            simOutput = wyniki;
+            ui->sim_output->appendPlainText("Zapisano wyniki symulacji.");
+        }
+        QObject* senderObj = sender();
+        if (senderObj) {
+            senderObj->deleteLater();
+        }
+
+        // Ustawiamy zmienną członkowską na nullptr TYLKO wtedy,
+        // gdy ten sygnał pochodzi od aktualnie przypisanego handlera.
+        // (Zapobiega to usuwaniu referencji do nowego wątku przez stary, opóźniony sygnał)
+        if (senderObj == pHandler) {
+            pHandler = nullptr;
+        }
+        if(result){
+            ui->sim_output->appendPlainText("Znaleziono punkt lądowania! X: " + QString::number(wyniki.back().pos.x) + " Y: " + QString::number(wyniki.back().pos.y));
+            Marble::GeoDataPlacemark *pktL;
+            // 1. Definiujemy przybliżoną stałą: ile metrów ma jeden stopień na równiku
+            const double METRY_NA_STOPIEN = 111320.0;
+
+            // 2. Przeliczamy szerokość geograficzną (Y)
+            // Zmiana latitude jest w miarę stała niezależnie od tego, gdzie jesteś.
+            double deltaLat = wyniki.back().pos.y / METRY_NA_STOPIEN;
+            double lat1 = aktualna_ramka.GPS_lat + deltaLat;
+
+            // 3. Przeliczamy długość geograficzną (X)
+            // Musimy uwzględnić "zwężanie się" Ziemi za pomocą cosinusa z latitude.
+            // Funkcja cos() przyjmuje radiany, a nie stopnie!
+            double latRad = aktualna_ramka.GPS_lat * (M_PI / 180.0); // Zamiana stopni na radiany
+            double metryNaStopienLon = METRY_NA_STOPIEN * std::cos(latRad);
+
+            double deltaLon = wyniki.back().pos.x / metryNaStopienLon;
+            double lon1 = aktualna_ramka.GPS_long + deltaLon;
+
+            Marble::GeoDataCoordinates L(lon1,lat1,0.0,Marble::GeoDataCoordinates::Degree);
+            map_widget_class->pktL->setCoordinate(L);
+            map_widget_class->map_widget->model()->treeModel()->updateFeature(map_widget_class->pktL);
+        }
+    });
+
 }
 
 
@@ -177,7 +305,24 @@ void MainWindow::on_actionUstawienia_triggered()
 
 void MainWindow::on_pushButton_clicked()
 {
-    int index = ui->stackedWidget->currentIndex();
-    ui->stackedWidget->setCurrentIndex(index + 1);
+    //int index = ui->stackedWidget->currentIndex();
+    //ui->stackedWidget->setCurrentIndex(index + 1);
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+
+void MainWindow::on_powrot_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
+
+void MainWindow::on_auto_mode_toggled(bool checked)
+{
+    if(checked){
+        ui->numbers_grid->setDisabled(true);
+    } else {
+        ui->numbers_grid->setDisabled(false);
+    }
 }
 

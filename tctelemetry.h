@@ -18,9 +18,13 @@ static uint8_t checksum(const uint8_t* data, size_t size){
 struct TELEMETRY{
     uint32_t SEQ;
     uint32_t timestamp;
+    uint8_t state;
     float GPS_lat;
     float GPS_long;
     float GPS_alt;
+    float GPS_speed_N;
+    float GPS_speed_E;
+    float GPS_speed_V;
     float temperature;
     float pressure;
     float acc_x, acc_y, acc_z;     // akcjeleracja w 3 osiach

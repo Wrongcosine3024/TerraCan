@@ -6,6 +6,9 @@
 #include "odbiornikcom_worker.h"
 #include "physicshandler.h"
 #include "mapwidget.h"
+#include "chart3d.h"
+#include <QTimer>
+#include <cmath>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,7 +30,7 @@ private slots:
 
     void on_COM_connect_toggled(bool checked);
 
-    void refreshConsole(const TELEMETRY &telemetria);
+    void refreshUI(const TELEMETRY &telemetria);    //odswieza konsole i mape
 
     void on_refresh_clicked();
 
@@ -43,11 +46,20 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_powrot_clicked();
+
+    void autoMode();
+    void on_auto_mode_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
+    TELEMETRY aktualna_ramka;
+    bool comStatus; //1 połączono
     OdbiornikWorker *comWorker;
     PhysicsHandler *pHandler = nullptr;
     std::vector<Output> simOutput;
     MapWidget *map_widget_class;
+    Chart3D *wykres;
+    QTimer *autoModeTimeout;
 };
 #endif // MAINWINDOW_H
