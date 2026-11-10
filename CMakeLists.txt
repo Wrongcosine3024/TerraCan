@@ -27,6 +27,7 @@ qt_add_executable(TerraCan_MissionControl
     settingdialog.h settingdialog.cpp settingdialog.ui
     chart3d.h chart3d.cpp
     mapwidget.h mapwidget.cpp
+    simwindow.h simwindow.cpp simwindow.ui
 
 
 )

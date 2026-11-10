@@ -11,7 +11,9 @@ MapWidget::MapWidget(QObject *parent)
     Marble::MarbleDirs::setMarblePluginPath(plugins_path);
 
     map_widget = new Marble::MarbleWidget;
+    //map_widget->setMapThemeId("earth/openstreetmap/openstreetmap.dgml");
     map_widget->setMapThemeId("earth/openstreetmap/openstreetmap.dgml");
+
     map_widget->setProjection(Marble::Mercator);
 
     route_document = new Marble::GeoDataDocument;

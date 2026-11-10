@@ -7,8 +7,10 @@
 #include "physicshandler.h"
 #include "mapwidget.h"
 #include "chart3d.h"
+#include "simwindow.h"
 #include <QTimer>
 #include <cmath>
+#include <QPointer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -51,6 +53,8 @@ private slots:
     void autoMode();
     void on_auto_mode_toggled(bool checked);
 
+    void on_new_window_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     TELEMETRY aktualna_ramka;
@@ -61,5 +65,6 @@ private:
     MapWidget *map_widget_class;
     Chart3D *wykres;
     QTimer *autoModeTimeout;
+    QPointer<simwindow> sim_console;
 };
 #endif // MAINWINDOW_H

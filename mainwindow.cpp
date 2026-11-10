@@ -11,6 +11,7 @@
 #include <marble/GeoDataDocument.h>
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataTreeModel.h>
+#include "simwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -147,6 +148,9 @@ void MainWindow::on_refresh_clicked()
 void MainWindow::on_clear_clicked()
 {
     ui->sim_output->clear();
+    if(sim_console != nullptr){
+        sim_console->clearconsole();
+    }
 }
 
 void MainWindow::physConsole(QString line){
@@ -175,7 +179,7 @@ void MainWindow::on_startSIM_clicked()
                 ui->startSIM->setText("Tryb AUTO");
                 ui->clear->setDisabled(true);
                 ui->simbtn2->setDisabled(true);
-                ui->sim_output->appendPlainText("Aktywowano tryb automatyczny, symulacja będzie aktualizowana z bieżącymi parametrami co 15 sekund.");
+                ui->sim_output->appendPlainText("Aktywowano tryb automatyczny, symulacja będzie aktualizowana z bieżącymi parametrami co 10 sekund.");
             }else{
                 ui->sim_output->appendPlainText("Tryb automatyczny wymaga aktywnego połączenia z portem COM. Symulacja zakończona.");
             }
@@ -241,8 +245,8 @@ void MainWindow::on_startSIM_clicked()
 void MainWindow::autoMode(){
 
     //odebranie wejscia z aplikacji
-    //startData input = {0,0,aktualna_ramka.GPS_alt,aktualna_ramka.GPS_speed_N,aktualna_ramka.GPS_speed_E,aktualna_ramka.GPS_speed_V,0.01,1000};
-    startData input = {0,0,aktualna_ramka.GPS_alt,40,80,aktualna_ramka.GPS_speed_V,0.01,1000};
+    startData input = {0,0,aktualna_ramka.GPS_alt,aktualna_ramka.GPS_speed_N,aktualna_ramka.GPS_speed_E,aktualna_ramka.GPS_speed_V,0.01,1000};
+    //startData input = {0,0,aktualna_ramka.GPS_alt,40,80,aktualna_ramka.GPS_speed_V,0.01,1000};
     pHandler = new PhysicsHandler(this, input); //inicjalizacja workera watku fizyki
 
     emit pHandler->policz();
@@ -259,8 +263,7 @@ void MainWindow::autoMode(){
             senderObj->deleteLater();
         }
 
-        // Ustawiamy zmienną członkowską na nullptr TYLKO wtedy,
-        // gdy ten sygnał pochodzi od aktualnie przypisanego handlera.
+        // zmienna członkowska = nullptr TYLKO wtedy gdy ten sygnał pochodzi od aktualnie przypisanego handlera
         // (Zapobiega to usuwaniu referencji do nowego wątku przez stary, opóźniony sygnał)
         if (senderObj == pHandler) {
             pHandler = nullptr;
@@ -268,18 +271,18 @@ void MainWindow::autoMode(){
         if(result){
             ui->sim_output->appendPlainText("Znaleziono punkt lądowania! X: " + QString::number(wyniki.back().pos.x) + " Y: " + QString::number(wyniki.back().pos.y));
             Marble::GeoDataPlacemark *pktL;
-            // 1. Definiujemy przybliżoną stałą: ile metrów ma jeden stopień na równiku
+            // przybliżoną stała - ile metrów ma jeden stopień na równiku
             const double METRY_NA_STOPIEN = 111320.0;
 
-            // 2. Przeliczamy szerokość geograficzną (Y)
-            // Zmiana latitude jest w miarę stała niezależnie od tego, gdzie jesteś.
+            // szerokość geograficzna (Y)
+            // zmiana latitude jest w miarę stała niezależnie od koordynatow
             double deltaLat = wyniki.back().pos.y / METRY_NA_STOPIEN;
             double lat1 = aktualna_ramka.GPS_lat + deltaLat;
 
-            // 3. Przeliczamy długość geograficzną (X)
-            // Musimy uwzględnić "zwężanie się" Ziemi za pomocą cosinusa z latitude.
-            // Funkcja cos() przyjmuje radiany, a nie stopnie!
-            double latRad = aktualna_ramka.GPS_lat * (M_PI / 180.0); // Zamiana stopni na radiany
+            // długość geograficzna (X)
+            // należy uwzględnić "zwężanie się" Ziemi za pomocą cosinusa z latitude.
+            // funkcja cos() przyjmuje radiany, a nie stopnie!
+            double latRad = aktualna_ramka.GPS_lat * (M_PI / 180.0);
             double metryNaStopienLon = METRY_NA_STOPIEN * std::cos(latRad);
 
             double deltaLon = wyniki.back().pos.x / metryNaStopienLon;
@@ -323,6 +326,22 @@ void MainWindow::on_auto_mode_toggled(bool checked)
         ui->numbers_grid->setDisabled(true);
     } else {
         ui->numbers_grid->setDisabled(false);
+    }
+}
+
+
+void MainWindow::on_new_window_toggled(bool checked)
+{
+    if(checked){
+        ui->new_window->setDisabled(true);
+        sim_console = new simwindow(this);
+        sim_console->setAttribute(Qt::WA_DeleteOnClose);
+        sim_console->podepnijDokument(ui->sim_output->document());
+        sim_console->show();
+        connect(sim_console, &simwindow::destroyed, this, [this](){
+            ui->new_window->setCheckState(Qt::Unchecked);
+            ui->new_window->setDisabled(false);
+        });
     }
 }
 
