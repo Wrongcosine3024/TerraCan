@@ -33,7 +33,7 @@ Projekt wykorzystuje system **CMake** oraz kompilator **MinGW**. Wymaga zainstal
 
 ```bash
 # 1. Klonowanie repozytorium
-git clone https://github.com/TwojUsername/TerraCan.git
+git clone https://github.com/Wrongcosine3024/TerraCan.git
 cd TerraCan
 
 # 2. Tworzenie katalogu budowania
